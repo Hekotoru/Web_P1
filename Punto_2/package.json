@@ -1,0 +1,21 @@
+{
+  "name": "Punto_1",
+  "version": "0.0.1",
+  "description": "Primer punto del proyecto",
+  "main": "App.js",
+  "scripts": {
+    "test": "nodejs App.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Hekotoru/Web_P1"
+  },
+  "author": "Hector Aristy",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/Hekotoru/Web_P1/issues"
+  },
+  "dependencies": {
+    "express": "~4.14.0"
+  }
+}
