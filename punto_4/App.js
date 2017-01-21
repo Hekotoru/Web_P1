@@ -1,3 +1,5 @@
+/*Repo: https://github.com/Hekotoru/Web_P1*/
+
 var express = require('express');
 var app = express();
 var port = 8081;
@@ -15,8 +17,8 @@ app.get('/home', function(req, res) {
 	var HtJson = {
 		"method" : req.method,
 		"path" : req.path,
-		"port" : ports[1],
 		"host" : req.get('host'),
+		"port" : ports[1],
 		"header": HeaderJson
 	}
 	res.send(HtJson);
