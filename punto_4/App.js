@@ -5,7 +5,7 @@ var app = express();
 var port = 8081;
 
 
-app.get('/home', function(req, res) {
+app.get('*', function(req, res) {
 	var ports = req.get('host').split(":");
 	/*
 	console.log("Method:" + req.method);
