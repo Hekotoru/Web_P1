@@ -13,10 +13,11 @@ app.get('/home', function(req, res) {
 	var HeaderJson = JSON.stringify(req.headers);
 	/*console.log("Headers:"+ HeaderJson);*/
 	var HtJson = {
-		"Method" : req.method,
-		"Path" : req.path,
-		"Port" : ports[1],
-		"Headers": HeaderJson
+		"method" : req.method,
+		"path" : req.path,
+		"port" : ports[1],
+		"host" : req.get('host'),
+		"header": HeaderJson
 	}
 	res.send(HtJson);
 });
