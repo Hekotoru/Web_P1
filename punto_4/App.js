@@ -12,12 +12,15 @@ app.get('*', function(req, res) {
 	console.log("Path:" + req.path);
 	console.log("Port:" + ports[1]);
 	*/
-	var HeaderJson = JSON.stringify(req.headers);
+	/*Realizar mapeo de lo que viene en req.headers ->credito Diego Mena*/
+	var arrHeaders = Object.keys(req.headers).map(function(i) {
+		return req.headers[i].toString() });
+	var HeaderJson = JSON.stringify(arrHeaders);
 	/*console.log("Headers:"+ HeaderJson);*/
 	var HtJson = {
 		"method" : req.method,
 		"path" : req.path,
-		"host" : req.get('host'),
+		"host" : ports[0],
 		"port" : ports[1],
 		"header": HeaderJson
 	}
