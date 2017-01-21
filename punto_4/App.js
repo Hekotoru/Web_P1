@@ -12,17 +12,20 @@ app.get('*', function(req, res) {
 	console.log("Path:" + req.path);
 	console.log("Port:" + ports[1]);
 	*/
-	/*Realizar mapeo de lo que viene en req.headers ->credito Diego Mena*/
-	var arrHeaders = Object.keys(req.headers).map(function(i) {
-		return req.headers[i].toString() });
-	var HeaderJson = JSON.stringify(arrHeaders);
+	var arrHeaders;
+	arrHeaders = [];
+	var HeaderJson = JSON.parse(JSON.stringify(req.headers));
+	for( var value in HeaderJson)
+	{
+		arrHeaders.push(HeaderJson[value]);
+	}
 	/*console.log("Headers:"+ HeaderJson);*/
 	var HtJson = {
 		"method" : req.method,
 		"path" : req.path,
 		"host" : ports[0],
 		"port" : ports[1],
-		"header": HeaderJson
+		"header": arrHeaders
 	}
 	res.send(HtJson);
 });
