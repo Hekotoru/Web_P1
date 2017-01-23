@@ -16,6 +16,8 @@
     "url": "https://github.com/Hekotoru/Web_P1/issues"
   },
   "dependencies": {
-    "express": "~4.14.0"
+    "body-parser": "^1.16.0",
+    "express": "~4.14.0",
+    "path": "^0.12.7"
   }
 }
