@@ -21,7 +21,7 @@ app.get('/error',function(req,res){
 	res.status(500).send();
 });
 
-app.all('/noimplemented',function(req,res){
+app.all('/notimplemented',function(req,res){
 	res.set('Allow',['GET','POST','PUT']);
 	switch(req.method) {
 		case "GET":
