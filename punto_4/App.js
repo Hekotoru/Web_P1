@@ -21,12 +21,25 @@ app.get('/error',function(req,res){
 	res.status(500).send();
 });
 
-app.get('/noimplemented',function(req,res){
-
+app.all('/noimplemented',function(req,res){
+	res.set('Allow',['GET','POST','PUT']);
+	switch(req.method) {
+		case "GET":
+			res.status(200).send();
+			break;
+		case "POST":
+			res.status(200).send();
+			break;
+		case "PUT":
+			res.status(200).send();
+			break;
+		default:
+			res.status(501).send();
+	}
 });
 
 app.get('/login',function(req, res) {
-	res.sendFile(path.join(__dirname + '/index.html'));
+	res.sendFile(__dirname + '/index.html');
 });
 
 app.post('/login',function(req,res){
@@ -37,7 +50,8 @@ app.post('/login',function(req,res){
 		"username" : username,
 		"password" : password
 	}
-	res.type('json').status(200).send(jsonResponse);
+	res.type('json');
+	res.status(200).send(jsonResponse);
 });
 
 app.get('*', function(req, res) {
