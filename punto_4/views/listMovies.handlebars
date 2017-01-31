@@ -1,0 +1,20 @@
+<table class ="table">
+    <thead> 
+        <th>Id</th>
+        <th>Name</th> 
+        <th>Description</th> 
+        <th>Keyword</th>
+        <th>Image</th> 
+    </thead> 
+    <tbody>
+        {{#each movies}}
+        <tr> 
+            <td>{{id}}</td>
+            <td>{{name}}</td> 
+            <td>{{description}}</td> 
+            <td>{{keywords}}</td> 
+            <td><img src="{{image}}"/></td>
+        </tr>
+        {{/each}}  
+    </tbody> 
+</table> 
