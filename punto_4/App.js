@@ -15,12 +15,14 @@ var app = express();
 var port = 8081;
 var path = require('path');
 var redisClient = redis.createClient(redisYml.port, redisYml.host);
+app.use(express.static('generated'));
+
 app.use(express.static('public'));
 var db = new sqlite3.Database(sqlite3Yml.path, sqlite3.OPEN_READWRITE);
 var validUUID = true;
 
 // db.serialize(function() {
-// 	db.run("CREATE TABLE movies (id TEXT PRIMARY KEY, name TEXT, description TEXT, keywords TEXT,image TEXT, smallThumbnail TEXT, mediumThumbnail TEXT, largeThumbnail TEXT)");
+// 	db.run("CREATE TABLE movies (id TEXT PRIMARY KEY, name TEXT, description TEXT, keywords TEXT,image TEXT, smallThumbnail TEXT, mediumThumbnail TEXT, largeThumbnail TEXT, compressedThumbnail TEXT)");
 // });
 redisClient.on('connect', function () {
 	console.log('Redis connected');
@@ -161,11 +163,11 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 		while (!verifyUUID(newUUID)) {
 			newUUID = uuid();
 		}
-		var query = db.prepare("INSERT INTO movies values (?,?,?,?,?)");
+		var query = db.prepare("INSERT INTO movies (id,name,description,keywords,image) values (?,?,?,?,?)");
         query.run(newUUID, Name, Description, Keywords, "/img/"+req.file.filename);
         query.finalize();
 	});
-	redisClient.set('hector:Images', "/img/"+req.file.filename);
+	redisClient.set('hector:uploadedImage', "/img/"+req.file.filename);
 	res.redirect('/movies');
 });
 
