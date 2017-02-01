@@ -1,6 +1,5 @@
 <table class ="table">
     <thead> 
-        <th>Id</th>
         <th>Name</th> 
         <th>Description</th> 
         <th>Keyword</th>
@@ -9,11 +8,14 @@
     <tbody>
         {{#each movies}}
         <tr> 
-            <td>{{id}}</td>
             <td>{{name}}</td> 
             <td>{{description}}</td> 
-            <td>{{keywords}}</td> 
-            <td><img src="{{image}}"/></td>
+            <td>{{keywords}}</td>
+            {{#if mediumThumbnail}} 
+            <td><a href="/movies/details/{{id}}"><img src="{{mediumThumbnail}}"/></a></td>
+            {{else}}
+            <td><a href="/movies/details/{{id}}"><img src="{{image}}"/></a></td>
+            {{/if}}
         </tr>
         {{/each}}  
     </tbody> 

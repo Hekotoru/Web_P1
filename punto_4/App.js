@@ -14,14 +14,17 @@ var sqlite3Yml = yamlConfig.load('./sqlite.yml');
 var app = express();
 var port = 8081;
 var path = require('path');
-// var redisClient = redis.createClient(redisYml.port, redisYml.host);
+var redisClient = redis.createClient(redisYml.port, redisYml.host);
 app.use(express.static('public'));
 var db = new sqlite3.Database(sqlite3Yml.path, sqlite3.OPEN_READWRITE);
 var validUUID = true;
 
-// redisClient.on('connect', function () {
-// 	console.log('Redis connected');
+// db.serialize(function() {
+// 	db.run("CREATE TABLE movies (id TEXT PRIMARY KEY, name TEXT, description TEXT, keywords TEXT,image TEXT, smallThumbnail TEXT, mediumThumbnail TEXT, largeThumbnail TEXT)");
 // });
+redisClient.on('connect', function () {
+	console.log('Redis connected');
+});
 
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -162,7 +165,7 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
         query.run(newUUID, Name, Description, Keywords, "/img/"+req.file.filename);
         query.finalize();
 	});
-
+	redisClient.set('hector:Images', "/img/"+req.file.filename);
 	res.redirect('/movies');
 });
 
