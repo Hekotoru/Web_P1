@@ -15,6 +15,7 @@ var app = express();
 var port = 8081;
 var path = require('path');
 var redisClient = redis.createClient(redisYml.port, redisYml.host);
+redisClient.auth(redisYml.authKey);
 app.use(express.static('generated'));
 
 app.use(express.static('public'));
