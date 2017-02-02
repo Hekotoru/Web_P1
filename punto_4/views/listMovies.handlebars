@@ -1,0 +1,22 @@
+<table class ="table">
+    <thead> 
+        <th>Name</th> 
+        <th>Description</th> 
+        <th>Keyword</th>
+        <th>Image</th> 
+    </thead> 
+    <tbody>
+        {{#each movies}}
+        <tr> 
+            <td>{{name}}</td> 
+            <td>{{description}}</td> 
+            <td>{{keywords}}</td>
+            {{#if mediumThumbnail}} 
+            <td><a href="/movies/details/{{id}}"><img src="{{mediumThumbnail}}"/></a></td>
+            {{else}}
+            <td><a href="/movies/details/{{id}}"><img src="{{image}}"/></a></td>
+            {{/if}}
+        </tr>
+        {{/each}}  
+    </tbody> 
+</table> 

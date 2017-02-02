@@ -1,0 +1,28 @@
+ <form class="container">
+{{#each movies}}
+  <fieldset disabled>
+  <div class="form-group">
+    <label for="Name">Name</label>
+    <input type="text" name="Name" class="form-control" value="{{name}}">
+  </div>
+  <div class="form-group">
+    <label for="Description">Description</label>
+    <textarea name="Description" class="form-control" rows="3">{{description}}</textarea>
+  </div>
+  <div class="form-group">
+    <label for="Keywords">Keywords</label>
+    <select class="form-control-static" name="Keywords">
+      <option>{{keywords}}</option>
+    </select>
+  </div>
+  <div class="form-group {{validateImage}}">
+    <label for="Image">Image</label>
+    {{#if compressedThumbnail}}
+    <img src="{{compressedThumbnail}}"name="Image" />
+    {{else}}
+    <img src="{{image}}"name="Image" />
+    {{/if}}
+  </div>
+  </fieldset>
+  {{/each}}
+</div>
