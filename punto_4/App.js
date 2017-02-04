@@ -125,9 +125,9 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 	var Name = req.body.Name;
 	var Description = req.body.Description;
 	var Keywords = req.body.Keywords;
-	var Image = req.file.originalname;
-	console.log(req.file);
-	console.log(Name);
+	var Image = req.body.Image;
+	// console.log(req.file);
+	// console.log(Name);
 	var validateName, validateDescription, validateKeywords, validateImage;
 	var validateInputName, validateInputDescription, validateInputKeywords, validateInputImage;
 	validateInputName = validateInputDescription = validateInputKeywords = validateInputImage = "form-control-error";
@@ -145,12 +145,13 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 		validateKeywords = "has-success";
 		validateInputKeywords = "form-control-success";
 	}
-	if (Image != '') {
+	if (Image != '' && Image != undefined ) {
 		validateImage = "has-success";
 		validateInputKeywords = "form-control-success";
 	}
 	if (validateImage == "has-error" || validateKeywords == "has-error" ||
 		validateName == "has-error" || validateDescription == "has-error") {
+		// console.log("entre a pintar");
 		res.render('createMovies', {
 			validateName: validateName,
 			validateInputName: validateInputName,
@@ -159,7 +160,7 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 			validateImage: validateImage,
 			validateInputImage: validateInputImage
 		});
-	}
+	} else {
 	db.serialize(function() {
 		while (!verifyUUID(newUUID)) {
 			newUUID = uuid();
@@ -170,6 +171,7 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 	});
 	redisClient.set('hector:uploadedImage', "/img/"+req.file.filename);
 	res.redirect('/movies');
+	}
 });
 
 app.get('/404', function (req, res) {
