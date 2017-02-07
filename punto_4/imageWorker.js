@@ -8,6 +8,8 @@ var sqliteConfig = yalmConfig.load('./sqlite.yml');
 var tinifyConfig = yalmConfig.load('./tinify.yml');
 var tinify = require('tinify');
 var sharp = require('sharp');
+var MongoClient = require('mongodb').MongoClient;
+var dbMongoUrl = "mongodb://45.55.77.201:27017/hector_movies";
 var redisClient = redis.createClient(redisConfig.port, redisConfig.host);
 redisClient.auth(redisConfig.authKey);
 var redisSubsClient = redis.createClient(redisConfig.port, redisConfig.host);
@@ -42,11 +44,17 @@ redisSubsClient.on('message', function(channel, key) {
                     if (err) {
                         console.error('Error creating compressed image: ' + err);
                     } else {
-                        db.serialize(function() {
-                            var statement = db.prepare("UPDATE movies set compressedThumbnail = (?) where image = (?)");
-                            statement.run("/compressed_" + fileName, fullPath);
-                            statement.finalize();
+                        MongoClient.connect(dbMongoUrl, function(err, db){
+                            var moviesCollection = db.collection('movies').update(
+                                {image:fullPath},
+                                {$set: {compressedThumbnail: "/compressed_" + fileName}});
+                            db.close();
                         });
+                        // db.serialize(function() {
+                        //     var statement = db.prepare("UPDATE movies set compressedThumbnail = (?) where image = (?)");
+                        //     statement.run("/compressed_" + fileName, fullPath);
+                        //     statement.finalize();
+                        // });
                         console.log('Compressed image created');
                     }
                 });
@@ -54,11 +62,17 @@ redisSubsClient.on('message', function(channel, key) {
                     if (err) {
                         console.error('Error creating small thumbnail: ' + err);
                     } else {
-                        db.serialize(function() {
-                            var statement = db.prepare("UPDATE movies set smallThumbnail = (?) where image = (?)");
-                            statement.run("/small_" + fileName, fullPath);
-                            statement.finalize();
+                        MongoClient.connect(dbMongoUrl, function(err, db){
+                            var moviesCollection = db.collection('movies').update(
+                                {image:fullPath},
+                                {$set: {smallThumbnail: "/small_" + fileName}});
+                            db.close();
                         });
+                        // db.serialize(function() {
+                        //     var statement = db.prepare("UPDATE movies set smallThumbnail = (?) where image = (?)");
+                        //     statement.run("/small_" + fileName, fullPath);
+                        //     statement.finalize();
+                        // });
                         console.log('Small thumbnail created');
                     }
                 });
@@ -66,11 +80,17 @@ redisSubsClient.on('message', function(channel, key) {
                     if (err) {
                         console.error('Error creating medium thumbnail: ' + err);
                     } else {
-                        db.serialize(function() {
-                            var statement = db.prepare("UPDATE movies set mediumThumbnail = (?) where image = (?)");
-                            statement.run("/medium_" + fileName, fullPath);
-                            statement.finalize();
+                        MongoClient.connect(dbMongoUrl, function(err, db){
+                            var moviesCollection = db.collection('movies').update(
+                                {image:fullPath},
+                                {$set: {mediumThumbnail: "/medium_" + fileName}});
+                            db.close();
                         });
+                        // db.serialize(function() {
+                        //     var statement = db.prepare("UPDATE movies set mediumThumbnail = (?) where image = (?)");
+                        //     statement.run("/medium_" + fileName, fullPath);
+                        //     statement.finalize();
+                        // });
                         console.log('Medium thumbnail created');
                     }
                 });
@@ -78,11 +98,17 @@ redisSubsClient.on('message', function(channel, key) {
                     if (err) {
                         console.error('Error creating large thumbnail: ' + err);
                     } else {
-                        db.serialize(function() {
-                            var statement = db.prepare("UPDATE movies set largeThumbnail = (?) where image = (?)");
-                            statement.run("/large_" + fileName, fullPath);
-                            statement.finalize();
+                        MongoClient.connect(dbMongoUrl, function(err, db){
+                            var moviesCollection = db.collection('movies').update(
+                                {image:fullPath},
+                                {$set: {largeThumbnail: "/large_" + fileName}});
+                            db.close();
                         });
+                        // db.serialize(function() {
+                        //     var statement = db.prepare("UPDATE movies set largeThumbnail = (?) where image = (?)");
+                        //     statement.run("/large_" + fileName, fullPath);
+                        //     statement.finalize();
+                        // });
                         console.log('Large thumbnail created');
                     }
                 });
