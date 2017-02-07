@@ -14,6 +14,7 @@ var sqlite3Yml = yamlConfig.load('./sqlite.yml');
 var app = express();
 var port = 8081;
 var path = require('path');
+var MongoClient = require('mongodb').MongoClient;
 var redisClient = redis.createClient(redisYml.port, redisYml.host);
 redisClient.auth(redisYml.authKey);
 app.use(express.static('generated'));
@@ -21,7 +22,7 @@ app.use(express.static('generated'));
 app.use(express.static('public'));
 var db = new sqlite3.Database(sqlite3Yml.path, sqlite3.OPEN_READWRITE);
 var validUUID = true;
-
+var dbMongoUrl = "mongodb://45.55.77.201:27017/hector_movies";
 // db.serialize(function() {
 // 	db.run("CREATE TABLE movies (id TEXT PRIMARY KEY, name TEXT, description TEXT, keywords TEXT,image TEXT, smallThumbnail TEXT, mediumThumbnail TEXT, largeThumbnail TEXT, compressedThumbnail TEXT)");
 // });
@@ -65,55 +66,88 @@ function verifyUUID(newUUID) {
 }
 
 app.get('/movies', function (req, res) {
-	db.serialize(function() {
-        db.all("SELECT * FROM movies", function(err, row) {
-			// console.log(row);
-            res.render('listMovies', {
-                movies: row
-            });
-        });
-    })
+		MongoClient.connect(dbMongoUrl, function(err, db){
+		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
+			res.render('listMovies', {
+				movies: docs 
+			});
+		});
+		db.close();
+	});
+	// db.serialize(function() {
+    //     db.all("SELECT * FROM movies", function(err, row) {
+	// 		// console.log(row);
+    //         res.render('listMovies', {
+    //             movies: row
+    //         });
+    //     });
+    // })
 });
 
 app.get('/movies/json', function (req, res) {
-		db.serialize(function() {
-        db.all("SELECT * FROM movies", function(err, row) {
-            res.send(row)
-        });
-    })
+	MongoClient.connect(dbMongoUrl, function(err, db){
+		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
+			res.send(docs);
+		});
+		db.close();
+	});
+	// 	db.serialize(function() {
+    //     db.all("SELECT * FROM movies", function(err, row) {
+    //         res.send(row)
+    //     });
+    // })
 });
 
 app.get('/movies/list', function (req, res) {
-	db.serialize(function() {
-		db.all("SELECT * FROM movies", function(err, row) {
-            row.forEach(function(element) {
-                element.keywords = element.keywords.split(',');
-            }, this);
-			// console.log(row);
-            res.render('listMovies', {
-                movies: row
-            });
-        });
-    })
+	MongoClient.connect(dbMongoUrl, function(err, db){
+		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
+			res.render('listMovies', {
+				movies: docs 
+			});
+		});
+		db.close();
+	});
+	// db.serialize(function() {
+	// 	db.all("SELECT * FROM movies", function(err, row) {
+	// 		// console.log(row);
+    //         res.render('listMovies', {
+    //             movies: row
+    //         });
+    //     });
+    // })
 });
 
 app.get('/movies/list/json', function (req, res) {
-	db.serialize(function() {
-        db.all("SELECT * FROM movies", function(err, row) {
-            res.send(row)
-        });
-    })
+	MongoClient.connect(dbMongoUrl, function(err, db){
+		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
+			res.send(docs);
+		});
+		db.close();
+	});
+	// db.serialize(function() {
+    //     db.all("SELECT * FROM movies", function(err, row) {
+    //         res.send(row)
+    //     });
+    // })
 });
 
 app.get('/movies/details/:id', function (req, res) {
-	db.serialize(function() {
-		db.all("SELECT * FROM movies WHERE id=?",req.param("id"), function(err, row) {
-			// console.log(row);
-            res.render('detailMovies', {
-                movies: row
-            });
-        });
-    })
+	MongoClient.connect(dbMongoUrl, function(err, db){
+		var moviesCollection = db.collection('movies').find({"id": req.param("id")}).toArray(function(err,docs){
+			res.render('detailMovies', {
+				movies: docs 
+			});
+		});
+		db.close();
+	});
+	// db.serialize(function() {
+	// 	db.all("SELECT * FROM movies WHERE id=?",req.param("id"), function(err, row) {
+	// 		// console.log(row);
+    //         res.render('detailMovies', {
+    //             movies: row
+    //         });
+    //     });
+    // })
 });
 
 app.get('/movies/create', function (req, res) {
@@ -125,9 +159,8 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 	var Name = req.body.Name;
 	var Description = req.body.Description;
 	var Keywords = req.body.Keywords;
-	var Image = req.body.Image;
 	// console.log(req.file);
-	// console.log(Name);
+	// console.log(Image);
 	var validateName, validateDescription, validateKeywords, validateImage;
 	var validateInputName, validateInputDescription, validateInputKeywords, validateInputImage;
 	validateInputName = validateInputDescription = validateInputKeywords = validateInputImage = "form-control-error";
@@ -145,7 +178,7 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 		validateKeywords = "has-success";
 		validateInputKeywords = "form-control-success";
 	}
-	if (Image != '' && Image != undefined ) {
+	if (req.file != undefined ) {
 		validateImage = "has-success";
 		validateInputKeywords = "form-control-success";
 	}
@@ -161,14 +194,32 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 			validateInputImage: validateInputImage
 		});
 	} else {
-	db.serialize(function() {
 		while (!verifyUUID(newUUID)) {
-			newUUID = uuid();
+				newUUID = uuid();
 		}
-		var query = db.prepare("INSERT INTO movies (id,name,description,keywords,image) values (?,?,?,?,?)");
-        query.run(newUUID, Name, Description, Keywords, "/img/"+req.file.filename);
-        query.finalize();
-	});
+		MongoClient.connect(dbMongoUrl, function(err, db){
+			moviesCollection = db.collection('movies');
+			moviesCollection.insert({
+				id: newUUID, 
+				name:Name, 
+				description:Description, 
+				keywords:Keywords, 
+				image: "/img/"+req.file.filename,
+				compressedThumbnail: "",
+				smallThumbnail: "",
+				mediumThumbnail: "",
+				largeThumbnail: "",
+			});
+			db.close();
+		});
+	// db.serialize(function() {
+	// 	while (!verifyUUID(newUUID)) {
+	// 		newUUID = uuid();
+	// 	}
+	// 	var query = db.prepare("INSERT INTO movies (id,name,description,keywords,image) values (?,?,?,?,?)");
+    //     query.run(newUUID, Name, Description, Keywords, "/img/"+req.file.filename);
+    //     query.finalize();
+	// });
 	redisClient.set('hector:uploadedImage', "/img/"+req.file.filename);
 	res.redirect('/movies');
 	}
