@@ -56,14 +56,6 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-function verifyUUID(newUUID) {
-	db.get("SELECT * FROM movies where id = (?)", newUUID, function (err, row) {
-		if (row > 0) {
-			validUUID = false;
-		}
-	});
-	return validUUID;
-}
 
 app.get('/movies', function (req, res) {
 		MongoClient.connect(dbMongoUrl, function(err, db){
@@ -189,9 +181,6 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 			validateInputImage: validateInputImage
 		});
 	} else {
-		while (!verifyUUID(newUUID)) {
-				newUUID = uuid();
-		}
 		MongoClient.connect(dbMongoUrl, function(err, db){
 			moviesCollection = db.collection('movies');
 			moviesCollection.insert({
