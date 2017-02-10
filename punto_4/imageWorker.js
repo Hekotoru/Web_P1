@@ -4,7 +4,7 @@ var redis = require('redis');
 var sqlite3 = require('sqlite3');
 var yalmConfig = require('node-yaml-config');
 var redisConfig = yalmConfig.load('./redis.yml');
-var sqliteConfig = yalmConfig.load('./sqlite.yml');
+// var sqliteConfig = yalmConfig.load('./sqlite.yml');
 var tinifyConfig = yalmConfig.load('./tinify.yml');
 var tinify = require('tinify');
 var sharp = require('sharp');
@@ -14,7 +14,7 @@ var redisClient = redis.createClient(redisConfig.port, redisConfig.host);
 redisClient.auth(redisConfig.authKey);
 var redisSubsClient = redis.createClient(redisConfig.port, redisConfig.host);
 redisSubsClient.auth(redisConfig.authKey);
-var db = new sqlite3.Database(sqliteConfig.path, sqlite3.OPEN_READWRITE);
+// var db = new sqlite3.Database(sqliteConfig.path, sqlite3.OPEN_READWRITE);
 tinify.key = tinifyConfig.key;
 var uploadedImage = null;
 app.use(express.static('public'));
@@ -48,7 +48,6 @@ redisSubsClient.on('message', function(channel, key) {
                             var moviesCollection = db.collection('movies').update(
                                 {image:fullPath},
                                 {$set: {compressedThumbnail: "/compressed_" + fileName}});
-                            db.close();
                         });
                         // db.serialize(function() {
                         //     var statement = db.prepare("UPDATE movies set compressedThumbnail = (?) where image = (?)");
@@ -66,7 +65,6 @@ redisSubsClient.on('message', function(channel, key) {
                             var moviesCollection = db.collection('movies').update(
                                 {image:fullPath},
                                 {$set: {smallThumbnail: "/small_" + fileName}});
-                            db.close();
                         });
                         // db.serialize(function() {
                         //     var statement = db.prepare("UPDATE movies set smallThumbnail = (?) where image = (?)");
@@ -84,7 +82,6 @@ redisSubsClient.on('message', function(channel, key) {
                             var moviesCollection = db.collection('movies').update(
                                 {image:fullPath},
                                 {$set: {mediumThumbnail: "/medium_" + fileName}});
-                            db.close();
                         });
                         // db.serialize(function() {
                         //     var statement = db.prepare("UPDATE movies set mediumThumbnail = (?) where image = (?)");
@@ -102,7 +99,6 @@ redisSubsClient.on('message', function(channel, key) {
                             var moviesCollection = db.collection('movies').update(
                                 {image:fullPath},
                                 {$set: {largeThumbnail: "/large_" + fileName}});
-                            db.close();
                         });
                         // db.serialize(function() {
                         //     var statement = db.prepare("UPDATE movies set largeThumbnail = (?) where image = (?)");

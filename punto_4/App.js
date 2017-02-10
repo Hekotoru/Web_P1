@@ -5,12 +5,12 @@ var bodyParser = require('body-parser');
 var exphbs = require('express-handlebars');
 var multer = require('multer');
 var crypto = require('crypto');
-var sqlite3 = require('sqlite3').verbose();
+//var sqlite3 = require('sqlite3').verbose();
 var uuid = require('uuid-v4');
 var yamlConfig = require('node-yaml-config');
 var redis = require('redis');
 var redisYml = yamlConfig.load('./redis.yml');
-var sqlite3Yml = yamlConfig.load('./sqlite.yml');
+//var sqlite3Yml = yamlConfig.load('./sqlite.yml');
 var app = express();
 var port = 8081;
 var path = require('path');
@@ -20,7 +20,7 @@ redisClient.auth(redisYml.authKey);
 app.use(express.static('generated'));
 
 app.use(express.static('public'));
-var db = new sqlite3.Database(sqlite3Yml.path, sqlite3.OPEN_READWRITE);
+// var db = new sqlite3.Database(sqlite3Yml.path, sqlite3.OPEN_READWRITE);
 var validUUID = true;
 var dbMongoUrl = "mongodb://45.55.77.201:27017/hector_movies";
 // db.serialize(function() {
@@ -72,7 +72,6 @@ app.get('/movies', function (req, res) {
 				movies: docs 
 			});
 		});
-		db.close();
 	});
 	// db.serialize(function() {
     //     db.all("SELECT * FROM movies", function(err, row) {
@@ -89,7 +88,6 @@ app.get('/movies/json', function (req, res) {
 		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
 			res.send(docs);
 		});
-		db.close();
 	});
 	// 	db.serialize(function() {
     //     db.all("SELECT * FROM movies", function(err, row) {
@@ -105,7 +103,6 @@ app.get('/movies/list', function (req, res) {
 				movies: docs 
 			});
 		});
-		db.close();
 	});
 	// db.serialize(function() {
 	// 	db.all("SELECT * FROM movies", function(err, row) {
@@ -122,7 +119,6 @@ app.get('/movies/list/json', function (req, res) {
 		var moviesCollection = db.collection('movies').find().toArray(function(err,docs){
 			res.send(docs);
 		});
-		db.close();
 	});
 	// db.serialize(function() {
     //     db.all("SELECT * FROM movies", function(err, row) {
@@ -138,7 +134,6 @@ app.get('/movies/details/:id', function (req, res) {
 				movies: docs 
 			});
 		});
-		db.close();
 	});
 	// db.serialize(function() {
 	// 	db.all("SELECT * FROM movies WHERE id=?",req.param("id"), function(err, row) {
@@ -210,7 +205,6 @@ app.post('/movies/create', upload.single('Image'), function (req, res) {
 				mediumThumbnail: "",
 				largeThumbnail: "",
 			});
-			db.close();
 		});
 	// db.serialize(function() {
 	// 	while (!verifyUUID(newUUID)) {
