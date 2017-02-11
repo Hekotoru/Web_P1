@@ -44,7 +44,7 @@ var storage = multer.diskStorage({
 
 var ionicStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-		cb(null, __dirname + '/public/img')
+		cb(null, './public/img')
     },
     filename: function(req, file, cb) {
         cb(null, file.originalname);
@@ -58,7 +58,7 @@ var upload = multer({
 
 var ionicUpload = multer({
 	dest: '/uploads/',
-	storage: storage
+	storage: ionicStorage
 });
 
 
