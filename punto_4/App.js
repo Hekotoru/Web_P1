@@ -241,6 +241,10 @@ app.post('/image', ionicUpload.single('image'), function(req, res, next) {
     res.status(200).send();
 });
 
+app.get('/image', function (req, res) {
+	res.status(404).send();
+});
+
 app.get('/404', function (req, res) {
 	res.status(404).send();
 });
