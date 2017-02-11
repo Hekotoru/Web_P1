@@ -57,6 +57,7 @@ var upload = multer({
 });
 
 var ionicUpload = multer({
+	dest: '/uploads/',
 	storage: storage
 });
 
