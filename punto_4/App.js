@@ -41,9 +41,25 @@ var storage = multer.diskStorage({
 		});
 	}
 });
+
+var ionicStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+		cb(null, './public/img')
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+
 var upload = multer({
 	storage: storage
 });
+
+var ionicUpload = multer({
+	storage: storage
+});
+
 
 app.engine('handlebars', exphbs({
 	defaultLayout: 'index'
@@ -210,6 +226,19 @@ app.post('/movies/create', upload.single('image'), function (req, res) {
 	redisClient.set('hector:uploadedImage', "/img/"+req.file.filename);
 	res.redirect('/movies');
 	}
+});
+
+app.post('/image', ionicUpload.single('image'), function(req, res, next) {
+	var requestContent = req.get('content-type');
+	if(requestContent != "multipart/form-data")
+	{
+		res.status(400).send();
+	}
+    res.set('Content-Type', 'application/json');
+    if (req.file ==undefined) {
+        res.status(400).send();
+    }
+    res.status(200).send();
 });
 
 app.get('/404', function (req, res) {
