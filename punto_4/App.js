@@ -44,7 +44,7 @@ var storage = multer.diskStorage({
 
 var ionicStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-		cb(null, './public/img')
+		cb(null, __dirname + '/public/img')
     },
     filename: function(req, file, cb) {
         cb(null, file.originalname);
@@ -234,7 +234,7 @@ app.post('/image', ionicUpload.single('image'), function(req, res, next) {
 	{
 		res.status(400).send();
 	}
-    // res.set('Content-Type', 'application/json');
+    res.set('Content-Type', 'application/json');
     if (!req.file) {
         res.status(400).send();
     }
@@ -242,6 +242,10 @@ app.post('/image', ionicUpload.single('image'), function(req, res, next) {
 });
 
 app.get('/image', function (req, res) {
+	res.status(404).send();
+});
+
+app.get('/movies/details', function (req, res) {
 	res.status(404).send();
 });
 
