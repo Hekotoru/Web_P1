@@ -120,6 +120,10 @@ app.get('/movies/list/json', function (req, res) {
 });
 
 app.get('/movies/details/:id', function (req, res) {
+	if (!req.param("id"))
+	{
+		res.status(404).send();
+	}
 	MongoClient.connect(dbMongoUrl, function(err, db){
 		var moviesCollection = db.collection('movies').find({"id": req.param("id")}).toArray(function(err,docs){
 			res.render('detailMovies', {
