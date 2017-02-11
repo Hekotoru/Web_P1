@@ -235,10 +235,6 @@ app.post('/image', ionicUpload.single('image'), function(req, res, next) {
 	{
 		res.status(400).send();
 	}
-    res.set('Content-Type', 'application/json');
-    if (!req.file) {
-        res.status(400).send();
-    }
     res.status(200).send();
 });
 
