@@ -141,11 +141,11 @@ app.get('/movies/create', function (req, res) {
 	res.render('createMovies');
 });
 
-app.post('/movies/create', upload.single('Image'), function (req, res) {
+app.post('/movies/create', upload.single('image'), function (req, res) {
 	var newUUID = uuid();
-	var Name = req.body.Name;
-	var Description = req.body.Description;
-	var Keywords = req.body.Keywords;
+	var Name = req.body.name;
+	var Description = req.body.description;
+	var Keywords = req.body.keywords;
 	// console.log(req.file);
 	// console.log(Image);
 	var validateName, validateDescription, validateKeywords, validateImage;
