@@ -230,12 +230,17 @@ app.post('/movies/create', upload.single('image'), function (req, res) {
 });
 
 app.post('/image', ionicUpload.single('image'), function(req, res, next) {
-	var requestContent = req.get('content-type');
-	if(requestContent != "multipart/form-data")
-	{
-		res.status(400).send();
-	}
-    res.status(200).send();
+	var code;
+    if (req.headers['content-type'].includes("multipart")) {
+        code = 200;
+    } else {
+        code = 400;
+    }
+    if (!req.file) {
+        res.status(400).send();
+        return;
+    }
+    res.status(code).send();
 });
 
 app.get('/image', function (req, res) {
@@ -243,6 +248,10 @@ app.get('/image', function (req, res) {
 });
 
 app.get('/movies/details', function (req, res) {
+	res.status(404).send();
+});
+
+app.get('/movies/id', function (req, res) {
 	res.status(404).send();
 });
 
